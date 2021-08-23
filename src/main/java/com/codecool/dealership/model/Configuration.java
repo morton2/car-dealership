@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="CONFIGURATION")
 public class Configuration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

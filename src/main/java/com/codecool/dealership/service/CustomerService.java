@@ -1,8 +1,15 @@
 package com.codecool.dealership.service;
+import com.codecool.dealership.dto.CarDto;
+import com.codecool.dealership.dto.CustomerDto;
+import com.codecool.dealership.dto.CustomerDto;
+import com.codecool.dealership.model.Car;
+import com.codecool.dealership.model.Customer;
 import com.codecool.dealership.model.Customer;
 import com.codecool.dealership.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -13,19 +20,35 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public List<Customer> retrieveCustomers() {
-       return customerRepository.findAll();
+    public List<CustomerDto> getCustomers() {
+        return customerRepository.findAll().stream().map(CustomerDto::new).collect(Collectors.toList());
     }
 
-    public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    public CustomerDto createAndUpdateCustomer(Customer customer) {
+        return new CustomerDto(customerRepository.save(customer));    }
+
+    public String deleteCustomer(Long id) {
+        if (customerRepository.existsById(id)) {
+            customerRepository.deleteById(id);
+            return "Customer successfully deleted";
+        } else {
+            return "Customer not found";
+        }
     }
 
-    public void deleteCustomer(Long id) {
-        customerRepository.deleteById(id);
+    public CustomerDto getCustomerById(Long id) {
+        Customer customer = customerRepository.findById(id).orElse(null);
+        if (customer == null) {
+            return null;
+        }
+        return new CustomerDto(customer);
     }
 
-    public Customer updateCustomer(Customer customer) {
-       return customerRepository.save(customer);
+    public List<CarDto> getAllCarsOfACustomer(Long id) {
+        if (customerRepository.existsById(id)) {
+            return customerRepository.getById(id).getCarList().stream().map(CarDto::new).collect(Collectors.toList());
+        } else {
+            throw new RuntimeException("Customer is not found");
+        }
     }
 }

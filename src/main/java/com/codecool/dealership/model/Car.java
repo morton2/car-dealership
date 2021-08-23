@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="CAR")
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +18,6 @@ public class Car {
     private Long serialNumber;
     @ManyToOne
     private Configuration configuration;
-    @JsonIgnore
-    @OneToMany(mappedBy = "car",cascade = CascadeType.ALL)
-    private List<Customer> customers;
+    @ManyToOne
+    private Customer customer;
 }

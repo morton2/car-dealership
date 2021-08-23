@@ -1,15 +1,16 @@
 package com.codecool.dealership.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="CUSTOMER")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +20,7 @@ public class Customer {
     private String nationality;
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
-    @ManyToOne
-    private Car car;
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<Car> carList;
 }

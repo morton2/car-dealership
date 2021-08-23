@@ -1,8 +1,10 @@
 package com.codecool.dealership.service;
+import com.codecool.dealership.dto.ConfigurationDto;
 import com.codecool.dealership.model.Configuration;
 import com.codecool.dealership.repository.ConfigurationRepository;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConfigurationService {
@@ -13,21 +15,28 @@ public class ConfigurationService {
         this.configurationRepository = configurationRepository;
     }
 
-    public Configuration getConfigById(Long id) {
-        Optional<Configuration> optionalConfiguration = configurationRepository.findById(id);
-        if (optionalConfiguration.isPresent()) return optionalConfiguration.get();
-        else throw new RuntimeException("Configuration does not exist");
+    public ConfigurationDto getConfigById(Long id) {
+        Configuration configuration = configurationRepository.findById(id).orElse(null);
+        if (configuration == null) {
+            return null;
+        }
+        return new ConfigurationDto(configuration);
     }
 
-    public Configuration updateConfigById(Configuration configuration) {
-        return configurationRepository.save(configuration);
+    public List<ConfigurationDto> retrieveConfigurations() {
+        return configurationRepository.findAll().stream().map(ConfigurationDto::new).collect(Collectors.toList());
     }
 
-    public Configuration addConfig(Configuration configuration) {
-        return configurationRepository.save(configuration);
+    public ConfigurationDto addAndUpdateConfig(Configuration configuration) {
+        return new ConfigurationDto(configurationRepository.save(configuration));    }
+
+    public String deleteConfiguration(Long id) {
+        if (configurationRepository.existsById(id)) {
+            configurationRepository.deleteById(id);
+            return "Configuration successfully deleted";
+        } else {
+            return "Configuration not found";
+        }
     }
 
-    public void deleteConfiguration(Long id) {
-        configurationRepository.deleteById(id);
-    }
 }
